@@ -49,7 +49,7 @@ class GlobalBuffer:
         self.rew_buf = np.zeros((local_buffer_capacity * episode_capacity), dtype=np.float16)
         self.hid_buf = np.zeros(
             (local_buffer_capacity * episode_capacity, configs_D3QTP.max_num_agents, configs_D3QTP.hidden_dim),
-            dtype=np.float16)
+            dtype=np.float32)
         self.done_buf = np.zeros(episode_capacity, dtype=bool)
         self.size_buf = np.zeros(episode_capacity, dtype=np.uint)
         self.obs_agent_buff = np.zeros(
@@ -136,10 +136,10 @@ class GlobalBuffer:
 
                 if local_idx < configs_D3QTP.seq_len - 1:
                     obs = self.obs_buf[global_idx * (self.local_buffer_capacity + 1):idx + global_idx + 1 + steps]
-                    hidden = np.zeros((configs_D3QTP.max_num_agents, configs_D3QTP.hidden_dim), dtype=np.float16)
+                    hidden = np.zeros((configs_D3QTP.max_num_agents, configs_D3QTP.hidden_dim), dtype=np.float32)
                 elif local_idx == configs_D3QTP.seq_len - 1:
                     obs = self.obs_buf[idx + global_idx + 1 - configs_D3QTP.seq_len:idx + global_idx + 1 + steps]
-                    hidden = np.zeros((configs_D3QTP.max_num_agents, configs_D3QTP.hidden_dim), dtype=np.float16)
+                    hidden = np.zeros((configs_D3QTP.max_num_agents, configs_D3QTP.hidden_dim), dtype=np.float32)
                 else:
                     obs = self.obs_buf[idx + global_idx + 1 - configs_D3QTP.seq_len:idx + global_idx + 1 + steps]
                     hidden = self.hid_buf[idx - configs_D3QTP.seq_len]
@@ -173,7 +173,7 @@ class GlobalBuffer:
             weights = np.power(priorities / min_p, -self.beta)
 
             data = (
-                torch.from_numpy(np.stack(b_obs).astype(np.float16)),
+                torch.from_numpy(np.stack(b_obs).astype(np.float32)),
                 torch.LongTensor(b_action).unsqueeze(1),
                 torch.HalfTensor(b_reward).unsqueeze(1),
                 torch.HalfTensor(b_done).unsqueeze(1),
@@ -183,7 +183,7 @@ class GlobalBuffer:
                 idxes,
                 torch.from_numpy(weights).unsqueeze(1),
                 self.ptr,
-                torch.from_numpy(np.stack(b_agent_obs).astype(np.float16))
+                torch.from_numpy(np.stack(b_agent_obs).astype(np.float32))
             )
 
             return data
@@ -302,7 +302,7 @@ class Learner:
 
         while not ray.get(self.buffer.check_done.remote()) and self.counter < configs_D3QTP.training_times:
 
-            for i in range(1, 6000001):
+            for i in range(1, 60000001):
 
                 data_id = ray.get(self.buffer.get_data.remote())
                 data = ray.get(data_id)
@@ -418,28 +418,28 @@ class Actor:
             actions, q_val, hidden = self.model.step(torch.from_numpy(obs.astype(np.float32)),
                                                      torch.from_numpy(obs_agent.astype(np.float32)))
 
-            if (random.random() < self.epsilon) and (step_counter <= 5000):
+            if (random.random() < self.epsilon) and (step_counter <= 7500):
                 # Note: only one agent do random action in order to keep the environment stable
                 actions[0] = np.random.randint(0, 6)
-            if (random.random() < (self.epsilon / 2)) and (step_counter > 5000) and (step_counter <= 10000):
+            if (random.random() < (self.epsilon / 2)) and (step_counter > 7500) and (step_counter <= 15000):
                 # Note: only one agent do random action in order to keep the environment stable
                 actions[0] = np.random.randint(0, 6)
-            if (random.random() < (self.epsilon / 4)) and (step_counter > 10000) and (step_counter <= 15000):
+            if (random.random() < (self.epsilon / 4)) and (step_counter > 15000) and (step_counter <= 22500):
                 # Note: only one agent do random action in order to keep the environment stable
                 actions[0] = np.random.randint(0, 6)
-            if (random.random() < (self.epsilon / 8)) and (step_counter > 15000) and (step_counter <= 20000):
+            if (random.random() < (self.epsilon / 8)) and (step_counter > 22500) and (step_counter <= 30000):
                 # Note: only one agent do random action in order to keep the environment stable
                 actions[0] = np.random.randint(0, 6)
-            if (random.random() < (self.epsilon / 16)) and (step_counter > 20000) and (step_counter <= 25000):
+            if (random.random() < (self.epsilon / 16)) and (step_counter > 30000) and (step_counter <= 37500):
                 # Note: only one agent do random action in order to keep the environment stable
                 actions[0] = np.random.randint(0, 6)
-            if (random.random() < (self.epsilon / 32)) and (step_counter > 25000) and (step_counter <= 30000):
+            if (random.random() < (self.epsilon / 32)) and (step_counter > 37500) and (step_counter <= 45000):
                 # Note: only one agent do random action in order to keep the environment stable
                 actions[0] = np.random.randint(0, 6)
-            if (random.random() < (self.epsilon / 64)) and (step_counter > 30000) and (step_counter <= 35000):
+            if (random.random() < (self.epsilon / 64)) and (step_counter > 45000) and (step_counter <= 52500):
                 # Note: only one agent do random action in order to keep the environment stable
                 actions[0] = np.random.randint(0, 6)
-            if (random.random() < (self.epsilon / 128)) and (step_counter > 35000) and (step_counter <= 40000):
+            if (random.random() < (self.epsilon / 128)) and (step_counter > 52500) and (step_counter <= 60000):
                 # Note: only one agent do random action in order to keep the environment stable
                 actions[0] = np.random.randint(0, 6)
 

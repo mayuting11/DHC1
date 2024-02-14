@@ -79,9 +79,9 @@ class Network(nn.Module):
         # nn.Flatten(start_dim=1, end_dim=-1) conduct flattening from the second dimension.
         self.obs_encoder = nn.Sequential(nn.Conv2d(self.input_shape[0], cnn_channel, 3, 1),
                                          nn.ReLU(True),
-                                         ResBlock(cnn_channel), ResBlock(cnn_channel),
                                          ResBlock(cnn_channel),
-                                         nn.Conv2d(cnn_channel, 16, 1, 1),
+                                         ResBlock(cnn_channel),
+                                         nn.Conv2d(cnn_channel, configs_D3QTP.seq_len, 1, 1),
                                          nn.ReLU(True),
                                          nn.Flatten())
 

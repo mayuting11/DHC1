@@ -80,7 +80,7 @@ class LocalBuffer:
         self.obs_buf = np.zeros((capacity + 1, num_agents, *obs_shape), dtype=bool)
         self.act_buf = np.zeros((capacity), dtype=np.uint8)
         self.rew_buf = np.zeros((capacity), dtype=np.float16)
-        self.hid_buf = np.zeros((capacity, num_agents, hidden_dim), dtype=np.float16)
+        self.hid_buf = np.zeros((capacity, num_agents, hidden_dim), dtype=np.float32)
         self.q_buf = np.zeros((capacity + 1, action_dim), dtype=np.float32)
         self.capacity = capacity
         self.size = 0
