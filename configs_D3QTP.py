@@ -90,7 +90,7 @@ Agent_REPR_SIZE = 12
 num_actors = 1
 log_interval = 10
 training_times = 600000
-save_interval = 2000
+save_interval = 20000
 gamma = 0.95
 batch_size = 192
 learning_starts = 50000
@@ -110,7 +110,7 @@ grad_norm_dqn = 40
 forward_steps = 2
 
 # global buffer
-episode_capacity = 2048
+episode_capacity = 1024
 
 # prioritized replay
 prioritized_replay_alpha = 0.6

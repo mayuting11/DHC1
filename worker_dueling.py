@@ -330,7 +330,7 @@ class Learner:
 
                 loss = (weights * self.huber_loss(td_error)).mean()
                 self.loss += loss.item()
-                run1['loss'].append(self.loss)
+                run1['loss'].append(loss)
 
                 self.optimizer.zero_grad()
                 scaler.scale(loss).backward()
@@ -411,7 +411,7 @@ class Actor:
         success_people = 0
         step_counter = 0
 
-        while True:
+        while step_counter <= 60000:
             # print("The number of counter is : {}".format(self.counter))
             # sample action
             # print('start iteration')
